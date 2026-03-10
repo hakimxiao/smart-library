@@ -1,0 +1,1 @@
+UPSTASH QTASH ENDPOINT = npx @upstash/qstash-cli@latest dev
