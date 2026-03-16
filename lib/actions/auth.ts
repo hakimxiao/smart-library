@@ -42,7 +42,8 @@ export const signInWithCredentials = async (
 export const signUp = async (params: AuthCredentials) => {
   const { fullName, email, universityId, password, universityCard } = params;
 
-  const ip = (await headers()).get("x-forwarded-for") || "127.0.0.1";
+  const headerList = await headers();
+  const ip = headerList.get("x-forwarded-for")?.split(",")[0] ?? "127.0.0.1";
   const { success } = await ratelimit.limit(ip);
 
   if (!success) return redirect("/too-fast");
@@ -68,6 +69,7 @@ export const signUp = async (params: AuthCredentials) => {
       password: hashedPassword,
     });
 
+    console.log("Triggering workflow for:", email);
     await workflowClient.trigger({
       url: `${config.env.prodApiEndpoint}/api/workflows/onboarding`,
       body: {
